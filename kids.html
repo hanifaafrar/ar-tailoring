@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Clothing - AR Tailoring</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-blue: #1e40af;
+            --light-blue: #dbeafe;
+            --dark-blue: #1e3a8a;
+            --navy-blue: #1e293b;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --accent-blue: #3b82f6;
+            --sky-blue: #0ea5e9;
+            --kids-accent: #f59e0b;
+            --kids-pink: #ec4899;
+            --kids-purple: #8b5cf6;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--light-gray);
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 20px rgba(37, 99, 235, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--light-blue);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-item a {
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: color 0.3s;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary-blue);
+        }
+
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            color: var(--navy-blue);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--kids-accent), var(--kids-pink), var(--kids-purple));
+            border-radius: 2px;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin: 3rem 0;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.1);
+            transition: all 0.3s;
+            border: 2px solid var(--light-blue);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.2);
+        }
+
+        .product-image-placeholder img {
+            width: 100%;       /* makes image fill the container width */
+            height: 100%;      /* makes image fill the container height */
+            object-fit: cover; /* crops image to fit container without distortion */
+            border-radius: 15px;
+            display: block;    /* remove inline spacing issues */
+       }
+
+        .product-card:nth-child(2n) .product-image-placeholder {
+            background: linear-gradient(135deg, var(--kids-pink), var(--kids-purple));
+        }
+
+        .product-card:nth-child(3n) .product-image-placeholder {
+            background: linear-gradient(135deg, var(--kids-purple), var(--primary-blue));
+        }
+
+        .product-info {
+            padding: 2rem;
+        }
+
+        .product-name {
+            font-size: 1.5rem;
+            color: var(--navy-blue);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .product-description {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .product-features {
+            background: var(--light-blue);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .product-features h4 {
+            color: var(--navy-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features-list li {
+            padding: 0.3rem 0;
+            color: var(--text-dark);
+        }
+
+        .features-list li::before {
+            content: "✓ ";
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--light-gray);
+            border-radius: 10px;
+        }
+
+        .price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .order-btn {
+            background: linear-gradient(135deg, var(--kids-accent), var(--kids-pink));
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .services-section {
+            margin: 4rem 0;
+            padding: 3rem;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.1);
+        }
+
+        .services-title {
+            font-size: 2rem;
+            color: var(--navy-blue);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-item {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: var(--light-blue);
+            transition: transform 0.3s;
+        }
+
+        .service-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--kids-accent);
+            margin-bottom: 1rem;
+        }
+
+        .service-item:nth-child(2n) .service-icon {
+            color: var(--kids-pink);
+        }
+
+        .service-item:nth-child(3n) .service-icon {
+            color: var(--kids-purple);
+        }
+
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25d366;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="akeel.html" class="logo">
+                <i class="fas fa-cut"></i>
+                AR Tailoring
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="akeel.html">Home</a></li>
+                <li class="nav-item"><a href="men.html">Men</a></li>
+                <li class="nav-item"><a href="women.html">Women</a></li>
+                <li class="nav-item"><a href="kids.html" style="color: var(--primary-blue);">Kids</a></li>
+                <li class="nav-item"><a href="about.html">About</a></li>
+                <li class="nav-item"><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- WhatsApp Button -->
+    <button class="whatsapp-btn" onclick="openWhatsApp()">
+        <i class="fab fa-whatsapp"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">👶 Kids Collection</h1>
+                <p class="page-subtitle">Adorable and comfortable clothing for your little ones</p>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid">
+                <!-- Product 1: School Uniforms -->
+                <div class="product-card">
+                    <div class="product-image-placeholder">
+                        <img src="0011.webp" alt="A sample image" />
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">School Uniforms</h3>
+                        <p class="product-description">
+                            High-quality school uniforms designed for comfort and durability. Perfect fit for active children with breathable fabrics that withstand daily wear and frequent washing.
+                        </p>
+                        <div class="product-features">
+                            <h4>Features:</h4>
+                            <ul class="features-list">
+                                <li>Durable cotton-polyester blend</li>
+                                <li>Comfortable fit for active kids</li>
+                                <li>Easy care and wrinkle-resistant</li>
+                                <li>Multiple school designs available</li>
+                                <li>Growth-friendly sizing</li>
+                            </ul>
+                        </div>
+                        <div class="price-section">
+                            <span class="price">Starting from LKR 1,500</span>
+                            <a href="contact.html" class="order-btn">Order Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2: Party Dresses -->
+                <div class="product-card">
+                    <div class="product-image-placeholder">
+                        <img src="01111.webp" alt="A sample image" />
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Party & Special Occasion Dresses</h3>
+                        <p class="product-description">
+                            Beautiful party dresses for birthdays, weddings, and special celebrations. Designed with fun colors, comfortable fits, and adorable details that make kids feel special.
+                        </p>
+                        <div class="product-features">
+                            <h4>Features:</h4>
+                            <ul class="features-list">
+                                <li>Soft silk and cotton fabrics</li>
+                                <li>Fun colors and patterns</li>
+                                <li>Comfortable and non-restrictive</li>
+                                <li>Special occasion ready</li>
+                                <li>Machine washable materials</li>
+                            </ul>
+                        </div>
+                        <div class="price-section">
+                            <span class="price">Starting from LKR 3,500</span>
+                            <a href="contact.html" class="order-btn">Order Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3: Casual Wear -->
+                <div class="product-card">
+                    <div class="product-image-placeholder">
+                        <img src="2323.webp" alt="A sample image" />
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Casual T-Shirts & Shorts</h3>
+                        <p class="product-description">
+                            Comfortable everyday wear including colorful t-shirts, shorts, and casual outfits. Perfect for playtime, outings, and relaxed weekend activities.
+                        </p>
+                        <div class="product-features">
+                            <h4>Features:</h4>
+                            <ul class="features-list">
+                                <li>100% cotton for comfort</li>
+                                <li>Fun prints and solid colors</li>
+                                <li>Durable stitching</li>
+                                <li>Perfect for active play</li>
+                                <li>Easy care instructions</li>
+                            </ul>
+                        </div>
+                        <div class="price-section">
+                            <span class="price">Starting from LKR 1,200</span>
+                            <a href="contact.html" class="order-btn">Order Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4: Traditional Wear -->
+                <div class="product-card">
+                    <div class="product-image-placeholder">
+                        <img src="7878.webp" alt="A sample image" />
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Traditional Cultural Wear</h3>
+                        <p class="product-description">
+                            Beautiful traditional outfits for cultural events and festivals. Includes custom-made sarees for girls, traditional shirts for boys, and festive ethnic wear.
+                        </p>
+                        <div class="product-features">
+                            <h4>Features:</h4>
+                            <ul class="features-list">
+                                <li>Authentic traditional designs</li>
+                                <li>Comfortable cultural styling</li>
+                                <li>Festival and ceremony ready</li>
+                                <li>Age-appropriate designs</li>
+                                <li>Quality traditional fabrics</li>
+                            </ul>
+                        </div>
+                        <div class="price-section">
+                            <span class="price">Starting from LKR 2,800</span>
+                            <a href="contact.html" class="order-btn">Order Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5: Baby Clothes -->
+                <div class="product-card">
+                    <div class="product-image-placeholder">
+                        <img src="1212.webp" alt="A sample image" />
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Baby & Toddler Wear</h3>
+                        <p class="product-description">
+                            Soft and gentle clothing for babies and toddlers. Made with hypoallergenic fabrics and designed for easy dressing, diaper changes, and maximum comfort.
+                        </p>
+                        <div class="product-features">
+                            <h4>Features:</h4>
+                            <ul class="features-list">
+                                <li>Hypoallergenic organic cotton</li>
+                                <li>Soft and gentle on skin</li>
+                                <li>Easy snap and velcro closures</li>
+                                <li>Frequent wash friendly</li>
+                                <li>Safety-tested materials</li>
+                            </ul>
+                        </div>
+                        <div class="price-section">
+                            <span class="price">Starting from LKR 800</span>
+                            <a href="contact.html" class="order-btn">Order Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6: Sports & Activewear -->
+                <div class="product-card">
+                    <div class="product-image-placeholder">
+                        <img src="1213.jpg" alt="A sample image" />
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sports & Activewear</h3>
+                        <p class="product-description">
+                            Athletic and sports clothing designed for active kids. Includes sports uniforms, exercise wear, and comfortable clothing for outdoor activities and sports.
+                        </p>
+                        <div class="product-features">
+                            <h4>Features:</h4>
+                            <ul class="features-list">
+                                <li>Moisture-wicking fabrics</li>
+                                <li>Flexible and stretchy materials</li>
+                                <li>Sports team customization</li>
+                                <li>Durable for active use</li>
+                                <li>Quick-dry technology</li>
+                            </ul>
+                        </div>
+                        <div class="price-section">
+                            <span class="price">Starting from LKR 2,200</span>
+                            <a href="contact.html" class="order-btn">Order Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Section -->
+            <div class="services-section">
+                <h2 class="services-title">Our Kids' Tailoring Services</h2>
+                <div class="services-grid">
+                    <div class="service-item">
+                        <div class="service-icon">👶</div>
+                        <h3>Age-Appropriate Sizing</h3>
+                        <p>Perfect fits that account for growth and comfort</p>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">🎨</div>
+                        <h3>Fun Designs</h3>
+                        <p>Colorful and playful designs kids love</p>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">🛡️</div>
+                        <h3>Safe Materials</h3>
+                        <p>Child-safe, hypoallergenic fabrics only</p>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">📏</div>
+                        <h3>Growth-Friendly</h3>
+                        <p>Designs that accommodate growing children</p>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">🏃</div>
+                        <h3>Active Comfort</h3>
+                        <p>Clothing designed for active play and movement</p>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">💧</div>
+                        <h3>Easy Care</h3>
+                        <p>Machine washable and easy-care fabrics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openWhatsApp() {
+            const phoneNumber = '94771234567'; // Replace with actual WhatsApp number
+            const message = encodeURIComponent('Hello! I am interested in your kids\' clothing services.');
+            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        }
+    </script>
+</body>
+</html>
