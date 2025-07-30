@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <!-- Using unpkg.com as primary CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        button {
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #message {
+            margin: 15px 0;
+            text-align: center;
+        }
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password (min 6 characters)" required minlength="6">
+            <input type="text" id="fullName" placeholder="Full Name" required>
+            <input type="tel" id="mobileNumber" placeholder="Mobile Number" required>
+            <button type="submit" id="registerBtn">Register</button>
+        </form>
+        <div id="message"></div>
+        <div class="links">
+            <p>Already have an account? <a href="login-page.html">Login here</a> | <a href="index.html">Home</a></p>
+        </div>
+    </div>
+    <script>
+        // Replace these with your actual Supabase project credentials
+        const SUPABASE_URL = 'https://fvcnixtqxouvjrizmfyp.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2Y25peHRxeG91dmpyaXptZnlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4NzI4MTIsImV4cCI6MjA2OTQ0ODgxMn0.c34dGegZkdnDv0goom9fog3xZioeuNAcIu2__G6YDfw'
+        
+        // Check if Supabase is loaded
+        if (typeof supabase === 'undefined') {
+            document.getElementById('message').innerHTML = `<p style="color: red;">Error: Supabase library failed to load. Please check your internet connection.</p>`
+        } else {
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            
+            document.getElementById('registerForm').addEventListener('submit', async (e) => {
+                e.preventDefault()
+                
+                const email = document.getElementById('email').value
+                const password = document.getElementById('password').value
+                const fullName = document.getElementById('fullName').value
+                const mobileNumber = document.getElementById('mobileNumber').value
+                const messageDiv = document.getElementById('message')
+                const registerBtn = document.getElementById('registerBtn')
+                
+                // Basic validation
+                if (password.length < 6) {
+                    messageDiv.innerHTML = `<p style="color: red;">Password must be at least 6 characters long.</p>`
+                    return
+                }
+                
+                // Disable button during registration
+                registerBtn.disabled = true
+                registerBtn.textContent = 'Registering...'
+                
+                try {
+                    const { data, error } = await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                full_name: fullName,
+                                mobile_number: mobileNumber
+                            }
+                        }
+                    })
+                    
+                    if (error) {
+                        messageDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`
+                    } else {
+                        messageDiv.innerHTML = `<p style="color: green;">Registration successful! Check your email for confirmation.</p>`
+                        document.getElementById('registerForm').reset()
+                    }
+                } catch (err) {
+                    messageDiv.innerHTML = `<p style="color: red;">Error: ${err.message}</p>`
+                } finally {
+                    // Re-enable button
+                    registerBtn.disabled = false
+                    registerBtn.textContent = 'Register'
+                }
+            })
+        }
+
+    </script>
+    
+</body>
+</html>
