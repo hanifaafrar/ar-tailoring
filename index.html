@@ -876,12 +876,13 @@
                 <i class="fas fa-cut"></i>
                 AR Tailoring
             </a>
-            <ul class="nav-menu">
+        <ul class="nav-menu">
     <li class="nav-item"><a href="index.html">Home</a></li>
     <li class="nav-item"><a href="men.html">Men</a></li>
     <li class="nav-item"><a href="women.html" style="color: var(--primary-blue);">Women</a></li>
     <li class="nav-item"><a href="kids.html">Kids</a></li>
     <li class="nav-item"><a href="about.html">About</a></li>
+    <li class="nav-item" id="contactNavItem" style="display: none;"><a href="contact.html">Contact</a></li>
 </ul>
 
 <!-- User Authentication Section -->
@@ -905,6 +906,7 @@
         </div>
     </div>
 </div>
+
         </div>
     </nav>
 
@@ -1039,7 +1041,7 @@
             const message = encodeURIComponent('Hello! I found your contact page and would like to discuss my tailoring needs.');
             window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
         }
-        // Authentication Management
+ // Authentication Management
 function checkAuthStatus() {
     const userData = localStorage.getItem('userData');
     if (userData) {
@@ -1054,6 +1056,9 @@ function showUserMenu(name, email) {
     document.getElementById('authLinks').style.display = 'none';
     document.getElementById('userMenu').style.display = 'flex';
     
+    // Show contact page when logged in
+    document.getElementById('contactNavItem').style.display = 'block';
+    
     // Set user name
     document.getElementById('userName').textContent = name;
     
@@ -1065,8 +1070,12 @@ function showUserMenu(name, email) {
 function showAuthLinks() {
     document.getElementById('authLinks').style.display = 'flex';
     document.getElementById('userMenu').style.display = 'none';
+    
+    // Hide contact page when logged out
+    document.getElementById('contactNavItem').style.display = 'none';
 }
 
+// THIS FUNCTION WAS MISSING!
 function toggleUserDropdown() {
     const dropdown = document.getElementById('userDropdown');
     dropdown.classList.toggle('show');
@@ -1087,6 +1096,11 @@ function logout() {
     showAuthLinks();
     toggleUserDropdown();
     alert('You have been logged out successfully!');
+    
+    // Redirect to home if currently on contact page
+    if (window.location.href.includes('contact.html')) {
+        window.location.href = 'index.html';
+    }
 }
 
 // Close dropdown when clicking outside
