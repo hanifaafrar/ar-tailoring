@@ -785,6 +785,87 @@
             transform: scale(1.1);
             box-shadow: 0 6px 25px rgba(37, 211, 102, 0.6);
         }
+        /* User Authentication Styles */
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--sky-blue));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.user-icon:hover {
+    transform: scale(1.1);
+}
+
+.user-name {
+    color: var(--text-dark);
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--white);
+    min-width: 150px;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+    border-radius: 8px;
+    border: 1px solid var(--light-blue);
+    display: none;
+    z-index: 1001;
+}
+
+.user-dropdown.show {
+    display: block;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--text-dark);
+    text-decoration: none;
+    border-bottom: 1px solid var(--light-blue);
+    transition: background-color 0.3s;
+}
+
+.user-dropdown a:hover {
+    background-color: var(--light-blue);
+    color: var(--primary-blue);
+}
+
+.user-dropdown a:last-child {
+    border-bottom: none;
+}
+
+.auth-links {
+    display: flex;
+    gap: 15px;
+}
+
+.auth-links a {
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.auth-links a:hover {
+    color: var(--primary-blue);
+}
     </style>
 </head>
 <body>
@@ -796,13 +877,35 @@
                 AR Tailoring
             </a>
             <ul class="nav-menu">
-                <li class="nav-item"><a href="index.html">Home</a></li>
-                <li class="nav-item"><a href="men.html">Men</a></li>
-                <li class="nav-item"><a href="women.html" style="color: var(--primary-blue);">Women</a></li>
-                <li class="nav-item"><a href="kids.html">Kids</a></li>
-                <li class="nav-item"><a href="about.html">About</a></li>
-                <li class="nav-item"><a href="contact.html">Contact</a></li>
-            </ul>
+    <li class="nav-item"><a href="index.html">Home</a></li>
+    <li class="nav-item"><a href="men.html">Men</a></li>
+    <li class="nav-item"><a href="women.html" style="color: var(--primary-blue);">Women</a></li>
+    <li class="nav-item"><a href="kids.html">Kids</a></li>
+    <li class="nav-item"><a href="about.html">About</a></li>
+    <li class="nav-item"><a href="contact.html">Contact</a></li>
+</ul>
+
+<!-- User Authentication Section -->
+<div id="userSection">
+    <!-- Show when logged out -->
+    <div id="authLinks" class="auth-links">
+        <a href="login-page.html">Login</a>
+        <a href="register-page.html">Get Styled</a>
+    </div>
+    
+    <!-- Show when logged in -->
+    <div id="userMenu" class="user-menu" style="display: none;">
+        <span id="userName" class="user-name"></span>
+        <div id="userIcon" class="user-icon" onclick="toggleUserDropdown()">
+            <span id="userInitials"></span>
+        </div>
+        <div id="userDropdown" class="user-dropdown">
+            <a href="#" onclick="showProfile()">Profile</a>
+            <a href="#" onclick="showOrders()">My Orders</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </div>
+</div>
         </div>
     </nav>
 
@@ -937,6 +1040,70 @@
             const message = encodeURIComponent('Hello! I found your contact page and would like to discuss my tailoring needs.');
             window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
         }
+        // Authentication Management
+function checkAuthStatus() {
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+        const user = JSON.parse(userData);
+        showUserMenu(user.name, user.email);
+    } else {
+        showAuthLinks();
+    }
+}
+
+function showUserMenu(name, email) {
+    document.getElementById('authLinks').style.display = 'none';
+    document.getElementById('userMenu').style.display = 'flex';
+    
+    // Set user name
+    document.getElementById('userName').textContent = name;
+    
+    // Create initials from name
+    const initials = name.split(' ').map(word => word.charAt(0).toUpperCase()).join('');
+    document.getElementById('userInitials').textContent = initials;
+}
+
+function showAuthLinks() {
+    document.getElementById('authLinks').style.display = 'flex';
+    document.getElementById('userMenu').style.display = 'none';
+}
+
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('show');
+}
+
+function showProfile() {
+    alert('Profile functionality coming soon!');
+    toggleUserDropdown();
+}
+
+function showOrders() {
+    alert('Orders functionality coming soon!');
+    toggleUserDropdown();
+}
+
+function logout() {
+    localStorage.removeItem('userData');
+    showAuthLinks();
+    toggleUserDropdown();
+    alert('You have been logged out successfully!');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const userMenu = document.getElementById('userMenu');
+    const dropdown = document.getElementById('userDropdown');
+    
+    if (userMenu && !userMenu.contains(event.target)) {
+        dropdown.classList.remove('show');
+    }
+});
+
+// Check auth status when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    checkAuthStatus();
+});
         
 </script>
 </body>
